@@ -169,7 +169,7 @@
                     </div>
                 </div>
 
-                <!-- Profile Icon (from X) -->
+                <!-- Profile Icon (from local file) -->
                 <div class="flex-shrink-0 order-1 md:order-2">
                     <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 border-2 border-theme shadow-brutalist bg-theme overflow-hidden">
                         <!-- Fallback SVG (Behind) -->
@@ -207,8 +207,8 @@
 
                     <!-- Overlay for text/logo -->
                     <div class="absolute inset-0 z-10 flex items-center justify-center p-2 sm:p-4 pointer-events-none">
-                        <!-- Logo with Glow -->
-                        <img src="takanekopodcastlogo.png" alt="たかねこPodcast" class="w-auto max-h-32 sm:max-h-40 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.9)] sm:drop-shadow-[0_0_25px_rgba(255,255,255,1)] transition-transform duration-300 group-hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <!-- Logo with Glow - Updated to Intermediate Size -->
+                        <img src="takanekopodcastlogo.png" alt="たかねこPodcast" class="w-auto max-h-48 sm:max-h-60 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.9)] sm:drop-shadow-[0_0_25px_rgba(255,255,255,1)] transition-transform duration-300 group-hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <!-- Fallback Text if Logo fails to load -->
                         <span class="text-2xl sm:text-3xl font-bold hidden border-b-2 border-white text-white pb-1 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">たかねこPodcast を聴く ↗</span>
                     </div>
@@ -277,7 +277,7 @@
             }
         ];
 
-        // 2. Tech Dept Members (Fixed syntax errors: quotes, commas, empty objects)
+        // 2. Tech Dept Members
         const techMembers = [
             {
                 name: "れーにち",
@@ -317,7 +317,7 @@
             }
         ];
 
-        // 3. Minecraft Dept Members (Fixed syntax errors: commas, empty objects)
+        // 3. Minecraft Dept Members
         const mcMembers = [
             {
                 name: "れーにち",
