@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>たかねこ | Takaneko Official</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @font-face {
+            font-family: 'Keifont';
+            src: url('keifont.ttf') format('truetype');
+            font-display: swap; 
+        }
+
+        :root {
+            /* Light Theme Variables */
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #000000;
+            --overlay-bg: rgba(255, 255, 255, 0.95);
+            --invert-filter: invert(0);
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #ffffff;
+            --overlay-bg: rgba(0, 0, 0, 0.95);
+            --invert-filter: invert(1);
+        }
+
+        body {
+            font-family: 'Keifont', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .border-theme { border-color: var(--border-color); }
+        .bg-theme { background-color: var(--bg-color); }
+        .bg-overlay { background-color: var(--overlay-bg); }
+        
+        .hover-theme-invert:hover { 
+            background-color: var(--text-color); 
+            color: var(--bg-color); 
+        }
+
+        /* Solid B&W Brutalist Shadow */
+        .shadow-brutalist {
+            box-shadow: 4px 4px 0px var(--border-color);
+        }
+        .shadow-brutalist-sm {
+            box-shadow: 2px 2px 0px var(--border-color);
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); border-left: 1px solid var(--border-color); }
+        ::-webkit-scrollbar-thumb { background: var(--text-color); }
+
+        #mobile-menu {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Automatic placeholder inversion for dark mode */
+        .theme-icon {
+            filter: var(--invert-filter);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="fixed top-0 w-full z-40 bg-theme border-b-2 border-theme transition-colors duration-300">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+            
+            <!-- Site Title -->
+            <div class="font-bold text-2xl tracking-wider cursor-pointer hover:opacity-70 transition-opacity" onclick="navigate('home')">
+                たかねこ
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center space-x-6">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="p-1 focus:outline-none hover:opacity-60 transition-opacity" onclick="toggleTheme()" aria-label="Toggle Theme">
+                    <svg id="theme-icon-svg" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Default to Moon (Light Mode) -->
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+
+                <!-- Hamburger Button -->
+                <button id="menu-btn" class="relative z-50 p-2 focus:outline-none group" onclick="toggleMenu()" aria-label="Menu">
+                    <div class="w-7 h-0.5 bg-[var(--text-color)] mb-2 transition-transform duration-300 origin-center"></div>
+                    <div class="w-7 h-0.5 bg-[var(--text-color)] mb-2 transition-opacity duration-300"></div>
+                    <div class="w-7 h-0.5 bg-[var(--text-color)] transition-transform duration-300 origin-center"></div>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav id="mobile-menu" class="fixed inset-0 z-30 bg-overlay flex flex-col items-center justify-center backdrop-blur-sm">
+        <div class="flex flex-col space-y-6 text-center w-full max-w-sm px-4">
+            <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('home')">
+                たかねこちゃんねる
+            </button>
+            <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('news')">
+                NEWS
+            </button>
+            <a href="https://takanekopodcast.vercel.app/#top" target="_blank" rel="noopener noreferrer" class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors block">
+                たかねこPodcast ↗
+            </a>
+            <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('tech')">
+                たかねこちゃんねる技術部
+            </button>
+            <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('mc')">
+                マイクラ課
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-24 pb-16 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        
+        <!-- ================= HOME SECTION ================= -->
+        <section id="home" class="content-section active">
+            <!-- Introduction -->
+            <div class="border-2 border-theme p-6 sm:p-8 mb-12 shadow-brutalist bg-theme">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-6 border-b-2 border-theme pb-4">自己紹介</h1>
+                <p class="text-lg leading-relaxed whitespace-pre-line mb-8">こんにちは！「たかねこ」です。
+普段はゲーム配信をしています！ホラゲー嫌いです</p>
+                
+                <h2 class="text-xl font-bold mb-4">公式SNS</h2>
+                <div class="flex flex-wrap gap-4">
+                    <a href="https://x.com/takaneko_ch?s=11" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
+                        X (Twitter)
+                    </a>
+                    <a href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
+                        YouTube
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent News -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 border-b-2 border-theme pb-2 gap-4">
+                <h2 class="text-2xl font-bold">最新のニュース</h2>
+                <button onclick="navigate('news')" class="text-sm border-2 border-theme px-4 py-1.5 font-bold hover-theme-invert transition-colors">
+                    全て見る
+                </button>
+            </div>
+            <div id="home-news-container" class="space-y-4">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- ================= NEWS SECTION ================= -->
+        <section id="news" class="content-section">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-8 border-b-2 border-theme pb-4">NEWS</h1>
+            <div id="all-news-container" class="space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- ================= TECH DEPT SECTION ================= -->
+        <section id="tech" class="content-section">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-6 border-b-2 border-theme pb-4">たかねこちゃんねる技術部</h1>
+            
+            <div class="mb-10">
+                <p class="text-lg leading-relaxed mb-6">技術部では、たかねこちゃんねるのお手伝いをしています。</p>
+                <a href="#" class="inline-block px-6 py-3 border-2 border-theme font-bold hover-theme-invert transition-colors shadow-brutalist-sm">
+                    技術部 公式X (Twitter) ↗
+                </a>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-6 border-b border-theme inline-block pb-1">メンバー紹介</h2>
+            <div id="tech-members-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- ================= MINECRAFT DEPT SECTION ================= -->
+        <section id="mc" class="content-section">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-6 border-b-2 border-theme pb-4">マイクラ課</h1>
+            
+            <div class="mb-10">
+                <p class="text-lg leading-relaxed mb-6">マイクラ課は、たかねこちゃんねるマイクラサーバーで活躍した人たちで構成されたグループです</p>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-6 border-b border-theme inline-block pb-1">メンバー紹介</h2>
+            <div id="mc-members-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t-2 border-theme bg-theme py-6 mt-auto">
+        <div class="max-w-5xl mx-auto text-center font-bold px-4">
+            &copy; <span id="current-year"></span> たかねこ / Takaneko. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // DATA CONFIGURATION
+        // ==========================================
+        
+        // 1. News Data (Add new items at the top of the array)
+        const newsData = [
+            {
+                date: "2026.09.22",
+                title: "公式サイトを公開しました！",
+                content: "たかねこちゃんねるの公式サイトを公開しました！たかねこちゃんねる技術部、マイクラ課の情報も更新していきます！"
+            },
+        ];
+
+        // 2. Tech Dept Members
+        const techMembers = [
+            {
+                name: "れーにち",
+                role: "技術部長",
+                intro: "たかねこちゃんねる技術部を設立。切り抜きやたかねこPodcastの制作、技術部やマイクラ課全体の管理を担当。",
+                sns: { X: "https://x.com/renitimc?s=11" }
+            },
+            {
+                name: "ヤクネコ",
+                role: "編集者",
+                intro: "たかねこちゃんねる切り抜き動画の制作を担当",
+                sns: { X: "https://x.com/a4ofw?s=11" }
+            },
+            {
+                name: "ちっそ",
+                role: "システムエンジニア",
+                intro: "マイクラサーバーなどシステム周りの管理を担当",
+                sns: 
+            }
+            {
+                name: "kapi",
+                role: "bgm制作”,
+                intro: "たかねこちゃんねるのbgm制作を担当",
+                sns: { X: "https://x.com/kapi_bluesky?s=11" }
+            }
+            {
+                name: "こたつ",
+                role: "イラストレーター”,
+                intro: "たかねこちゃんねるのイラストを制作。公式イラストの「たかねこちゃん」の制作主",
+                sns: { X: "https://x.com/kotatsu221122?s=11" }
+            }
+            {
+                name: "とと",
+                role: "イラストレーター”,
+                intro: "たかねこちゃんねるのイラストを制作",
+                sns: { X: "https://x.com/totomonaka1118?s=11" }
+            }
+        ];
+
+        // 3. Minecraft Dept Members
+        const mcMembers = [
+            {
+                name: "れーにち",
+                role: "課長",
+                intro: "技術部マイクラ課を設立",
+                sns: { X: "https://x.com/renitimc?s=11" }
+            },
+            {
+                name: "ちっそ",
+                role: "システムエンジニア",
+                intro: "マイクラサーバーの管理を担当",
+                sns: 
+            },
+            {
+                name: "ぽむぷりん",
+                role: "建築",
+                intro: "たかねこサーバーで建築を担当",
+                sns:
+            },
+            {
+                name: "新鮮昆布",
+                role: "建築、コマンド",
+                intro: "建築、コマンドで活躍",
+                sns: { X: "https://x.com/shinsenkonbusan?s=11" }
+            }
+            {
+                name: "ヤクネコ",
+                role: "建築",
+                intro: "ねくすこたかねほん担当",
+                sns: { X: "https://x.com/a4ofw?s=11" }
+            }
+        ];
+
+        // State Variables
+        let currentTheme = 'light';
+        let menuOpen = false;
+
+        // ==========================================
+        // CORE LOGIC & INITIALIZATION
+        // ==========================================
+
+        function init() {
+            // Set year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Check System Preference for Dark Mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                currentTheme = 'dark';
+            }
+            applyTheme();
+            
+            // Render Content
+            renderNews();
+            renderMembers('tech-members-container', techMembers);
+            renderMembers('mc-members-container', mcMembers);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const html = document.documentElement;
+            const iconSvg = document.getElementById('theme-icon-svg');
+            
+            if (currentTheme === 'dark') {
+                html.classList.add('dark');
+                // Change to Sun Icon
+                iconSvg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`;
+            } else {
+                html.classList.remove('dark');
+                // Change to Moon Icon
+                iconSvg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
+            }
+        }
+
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('menu-btn');
+            const lines = btn.querySelectorAll('div');
+
+            if (menuOpen) {
+                menu.classList.add('open');
+                // Animate hamburger to X
+                lines[0].style.transform = 'translateY(10px) rotate(45deg)';
+                lines[1].style.opacity = '0';
+                lines[2].style.transform = 'translateY(-10px) rotate(-45deg)';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                menu.classList.remove('open');
+                // Reset hamburger
+                lines[0].style.transform = 'none';
+                lines[1].style.opacity = '1';
+                lines[2].style.transform = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function navigate(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            
+            // Show Target
+            const target = document.getElementById(sectionId);
+            if(target) {
+                target.classList.add('active');
+            }
+
+            // Close menu if open
+            if (menuOpen) toggleMenu();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // ==========================================
+        // RENDERING FUNCTIONS
+        // ==========================================
+
+        function renderNews() {
+            const homeContainer = document.getElementById('home-news-container');
+            const newsContainer = document.getElementById('all-news-container');
+            
+            homeContainer.innerHTML = '';
+            newsContainer.innerHTML = '';
+
+            newsData.forEach((item, index) => {
+                const article = `
+                    <article class="border-2 border-theme p-5 shadow-brutalist-sm bg-theme hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-colors group cursor-pointer">
+                        <div class="text-sm font-bold mb-2 tracking-widest border-b border-theme inline-block group-hover:border-[var(--bg-color)] transition-colors">${item.date}</div>
+                        <h3 class="text-xl font-bold mb-3">${item.title}</h3>
+                        <p class="text-base opacity-90">${item.content}</p>
+                    </article>
+                `;
+
+                // Append to Full News page
+                newsContainer.insertAdjacentHTML('beforeend', article);
+
+                // Append only top 3 to Home page
+                if (index < 3) {
+                    homeContainer.insertAdjacentHTML('beforeend', article);
+                }
+            });
+        }
+
+        function renderMembers(containerId, dataArray) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            dataArray.forEach(member => {
+                // Generate SNS HTML
+                let snsHTML = '';
+                for (const [platform, link] of Object.entries(member.sns)) {
+                    snsHTML += `
+                        <a href="${link}" class="text-sm border-2 border-theme px-3 py-1 font-bold hover-theme-invert transition-colors">
+                            ${platform}
+                        </a>
+                    `;
+                }
+
+                // Generative SVG Placeholder (Icon) perfectly matching B&W theme
+                const svgIcon = `
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 sm:w-32 sm:h-32 border-2 border-theme shadow-brutalist bg-theme flex-shrink-0" fill="currentColor">
+                        <rect width="100" height="100" fill="transparent"/>
+                        <circle cx="50" cy="40" r="20" stroke="currentColor" stroke-width="4" fill="none"/>
+                        <path d="M 20 90 Q 50 60 80 90" stroke="currentColor" stroke-width="4" fill="none"/>
+                    </svg>
+                `;
+
+                const cardHTML = `
+                    <div class="border-2 border-theme p-6 shadow-brutalist flex flex-col sm:flex-row gap-6 bg-theme">
+                        <div class="flex justify-center sm:justify-start">
+                            ${svgIcon}
+                        </div>
+                        <div class="flex-grow text-center sm:text-left">
+                            <h3 class="text-2xl font-bold mb-1">${member.name}</h3>
+                            <div class="text-sm font-bold tracking-wider mb-4 border-b-2 border-theme inline-block pb-1">${member.role}</div>
+                            <p class="text-base mb-6 leading-relaxed">${member.intro}</p>
+                            <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                                ${snsHTML}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        // Run Init on Load
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
