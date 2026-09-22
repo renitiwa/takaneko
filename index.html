@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>たかねこ | Takaneko Official</title>
+    <title>たかねこちゃんねる公式サイト</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
@@ -101,8 +101,8 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
             
             <!-- Site Title -->
-            <div class="font-bold text-2xl tracking-wider cursor-pointer hover:opacity-70 transition-opacity" onclick="navigate('home')">
-                たかねこ
+            <div class="font-bold text-xl sm:text-2xl tracking-wider cursor-pointer hover:opacity-70 transition-opacity" onclick="navigate('home')">
+                たかねこちゃんねる公式サイト
             </div>
 
             <!-- Controls -->
@@ -150,19 +150,37 @@
         <!-- ================= HOME SECTION ================= -->
         <section id="home" class="content-section active">
             <!-- Introduction -->
-            <div class="border-2 border-theme p-6 sm:p-8 mb-12 shadow-brutalist bg-theme">
-                <h1 class="text-3xl sm:text-4xl font-bold mb-6 border-b-2 border-theme pb-4">自己紹介</h1>
-                <p class="text-lg leading-relaxed whitespace-pre-line mb-8">こんにちは！「たかねこ」です。
-普段はゲーム配信をしています！ホラゲー嫌いです</p>
+            <div class="border-2 border-theme p-6 sm:p-8 mb-12 shadow-brutalist bg-theme flex flex-col md:flex-row gap-8 items-center md:items-start">
                 
-                <h2 class="text-xl font-bold mb-4">公式SNS</h2>
-                <div class="flex flex-wrap gap-4">
-                    <a href="https://x.com/takaneko_ch?s=11" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
-                        X (Twitter)
-                    </a>
-                    <a href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
-                        YouTube
-                    </a>
+                <!-- Intro Text -->
+                <div class="flex-grow w-full order-2 md:order-1 text-center md:text-left">
+                    <h1 class="text-3xl sm:text-4xl font-bold mb-6 border-b-2 border-theme pb-4">自己紹介</h1>
+                    <p class="text-lg leading-relaxed whitespace-pre-line mb-8">こんにちは！「たかねこ」です。
+普段はゲーム配信をしています！ホラゲー嫌いです</p>
+                    
+                    <h2 class="text-xl font-bold mb-4">公式SNS</h2>
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                        <a href="https://x.com/takaneko_ch?s=11" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
+                            X (Twitter)
+                        </a>
+                        <a href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
+                            YouTube
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Profile Icon (from X) -->
+                <div class="flex-shrink-0 order-1 md:order-2">
+                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 border-2 border-theme shadow-brutalist bg-theme overflow-hidden">
+                        <!-- Fallback SVG (Behind) -->
+                        <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full text-[var(--text-color)]" fill="currentColor">
+                            <rect width="100" height="100" fill="transparent"/>
+                            <circle cx="50" cy="40" r="20" stroke="currentColor" stroke-width="4" fill="none"/>
+                            <path d="M 20 90 Q 50 60 80 90" stroke="currentColor" stroke-width="4" fill="none"/>
+                        </svg>
+                        <!-- Image (Front, hides if error) -->
+                        <img src="https://unavatar.io/twitter/takaneko_ch" alt="たかねこ" class="relative z-10 w-full h-full object-contain bg-theme" onerror="this.style.display='none'">
+                    </div>
                 </div>
             </div>
 
@@ -175,6 +193,23 @@
             </div>
             <div id="home-news-container" class="space-y-4">
                 <!-- Injected via JS -->
+            </div>
+
+            <!-- Podcast Banner -->
+            <div class="mt-12">
+                <h2 class="text-xl sm:text-2xl font-bold mb-4 border-b-2 border-theme pb-2 inline-block">たかねこPodcast supported by たかねこちゃんねる技術部</h2>
+                <a href="https://takanekopodcast.vercel.app/#top" target="_blank" rel="noopener noreferrer" class="block border-2 border-theme shadow-brutalist relative h-48 sm:h-64 bg-theme overflow-hidden group hover:scale-[1.01] transition-transform duration-300 cursor-pointer">
+                    <!-- Background Image -->
+                    <img src="takanekopodcastback.png" alt="Podcast Background" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity z-0" onerror="this.style.display='none'">
+                    
+                    <!-- Overlay for better text/logo contrast in both themes -->
+                    <div class="absolute inset-0 z-10 flex items-center justify-center p-6 bg-overlay group-hover:bg-transparent transition-colors duration-300 pointer-events-none">
+                        <!-- Logo -->
+                        <img src="takanekopodcastlogo.png" alt="たかねこPodcast" class="w-full h-full object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <!-- Fallback Text if Logo fails to load -->
+                        <span class="text-2xl sm:text-3xl font-bold hidden border-b-2 border-theme pb-1">たかねこPodcast を聴く ↗</span>
+                    </div>
+                </a>
             </div>
         </section>
 
@@ -221,7 +256,7 @@
 
     <footer class="border-t-2 border-theme bg-theme py-6 mt-auto">
         <div class="max-w-5xl mx-auto text-center font-bold px-4">
-            &copy; <span id="current-year"></span> たかねこ / Takaneko. All rights reserved.
+            &copy; <span id="current-year"></span> たかねこちゃんねる / Takaneko. All rights reserved.
         </div>
     </footer>
 
@@ -230,16 +265,16 @@
         // DATA CONFIGURATION
         // ==========================================
         
-        // 1. News Data (Add new items at the top of the array)
+        // 1. News Data
         const newsData = [
             {
                 date: "2026.09.22",
                 title: "公式サイトを公開しました！",
                 content: "たかねこちゃんねるの公式サイトを公開しました！たかねこちゃんねる技術部、マイクラ課の情報も更新していきます！"
-            },
+            }
         ];
 
-        // 2. Tech Dept Members
+        // 2. Tech Dept Members (Fixed syntax errors: quotes, commas, empty objects)
         const techMembers = [
             {
                 name: "れーにち",
@@ -257,29 +292,29 @@
                 name: "ちっそ",
                 role: "システムエンジニア",
                 intro: "マイクラサーバーなどシステム周りの管理を担当",
-                sns: 
-            }
+                sns: {} 
+            },
             {
                 name: "kapi",
-                role: "bgm制作”,
+                role: "bgm制作",
                 intro: "たかねこちゃんねるのbgm制作を担当",
                 sns: { X: "https://x.com/kapi_bluesky?s=11" }
-            }
+            },
             {
                 name: "こたつ",
-                role: "イラストレーター”,
+                role: "イラストレーター",
                 intro: "たかねこちゃんねるのイラストを制作。公式イラストの「たかねこちゃん」の制作主",
                 sns: { X: "https://x.com/kotatsu221122?s=11" }
-            }
+            },
             {
                 name: "とと",
-                role: "イラストレーター”,
+                role: "イラストレーター",
                 intro: "たかねこちゃんねるのイラストを制作",
                 sns: { X: "https://x.com/totomonaka1118?s=11" }
             }
         ];
 
-        // 3. Minecraft Dept Members
+        // 3. Minecraft Dept Members (Fixed syntax errors: commas, empty objects)
         const mcMembers = [
             {
                 name: "れーにち",
@@ -291,20 +326,20 @@
                 name: "ちっそ",
                 role: "システムエンジニア",
                 intro: "マイクラサーバーの管理を担当",
-                sns: 
+                sns: {}
             },
             {
                 name: "ぽむぷりん",
                 role: "建築",
                 intro: "たかねこサーバーで建築を担当",
-                sns:
+                sns: {}
             },
             {
                 name: "新鮮昆布",
                 role: "建築、コマンド",
                 intro: "建築、コマンドで活躍",
                 sns: { X: "https://x.com/shinsenkonbusan?s=11" }
-            }
+            },
             {
                 name: "ヤクネコ",
                 role: "建築",
@@ -438,25 +473,39 @@
                 let snsHTML = '';
                 for (const [platform, link] of Object.entries(member.sns)) {
                     snsHTML += `
-                        <a href="${link}" class="text-sm border-2 border-theme px-3 py-1 font-bold hover-theme-invert transition-colors">
+                        <a href="${link}" class="text-sm border-2 border-theme px-3 py-1 font-bold hover-theme-invert transition-colors" target="_blank" rel="noopener noreferrer">
                             ${platform}
                         </a>
                     `;
                 }
 
-                // Generative SVG Placeholder (Icon) perfectly matching B&W theme
+                // Generative SVG Placeholder (Icon) perfectly matching B&W theme (Placed Behind)
                 const svgIcon = `
-                    <svg viewBox="0 0 100 100" class="w-24 h-24 sm:w-32 sm:h-32 border-2 border-theme shadow-brutalist bg-theme flex-shrink-0" fill="currentColor">
+                    <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full text-[var(--text-color)]" fill="currentColor">
                         <rect width="100" height="100" fill="transparent"/>
                         <circle cx="50" cy="40" r="20" stroke="currentColor" stroke-width="4" fill="none"/>
                         <path d="M 20 90 Q 50 60 80 90" stroke="currentColor" stroke-width="4" fill="none"/>
                     </svg>
                 `;
 
+                let innerIconHTML = svgIcon;
+            
+                // Extract Twitter handle if X URL exists
+                if (member.sns && member.sns.X) {
+                    const match = member.sns.X.match(/(?:x\.com|twitter\.com)\/([^/?]+)/);
+                    if (match && match[1]) {
+                        const username = match[1];
+                        // Layer image OVER the SVG, hide image if it fails to load
+                        innerIconHTML += `<img src="https://unavatar.io/twitter/${username}" alt="${member.name}" class="relative z-10 w-full h-full object-contain bg-[var(--bg-color)]" onerror="this.style.display='none'">`;
+                    }
+                }
+
                 const cardHTML = `
                     <div class="border-2 border-theme p-6 shadow-brutalist flex flex-col sm:flex-row gap-6 bg-theme">
                         <div class="flex justify-center sm:justify-start">
-                            ${svgIcon}
+                            <div class="relative w-24 h-24 sm:w-32 sm:h-32 border-2 border-theme shadow-brutalist bg-theme flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                ${innerIconHTML}
+                            </div>
                         </div>
                         <div class="flex-grow text-center sm:text-left">
                             <h3 class="text-2xl font-bold mb-1">${member.name}</h3>
