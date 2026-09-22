@@ -160,10 +160,10 @@
                     
                     <h2 class="text-xl font-bold mb-4">公式SNS</h2>
                     <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                        <a href="https://x.com/takaneko_ch?s=11" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
-                            X (Twitter)
+                        <a href="https://x.com/takaneko_ch?s=11" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors inline-block">
+                            X
                         </a>
-                        <a href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors flex items-center gap-2">
+                        <a href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors inline-block">
                             YouTube
                         </a>
                     </div>
@@ -208,7 +208,7 @@
                     <!-- Overlay for text/logo -->
                     <div class="absolute inset-0 z-10 flex items-center justify-center p-2 sm:p-4 pointer-events-none">
                         <!-- Logo with Glow and Increased Size -->
-                        <img src="takanekopodcastlogo.png" alt="たかねこPodcast" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.9)] sm:drop-shadow-[0_0_25px_rgba(255,255,255,1)] transition-transform duration-300 scale-110 sm:scale-125 group-hover:scale-125 sm:group-hover:scale-[1.4]" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <img src="takanekopodcastlogo.png" alt="たかねこPodcast" class="w-80 sm:w-96 md:w-[32rem] lg:w-[40rem] h-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.9)] sm:drop-shadow-[0_0_25px_rgba(255,255,255,1)] transition-transform duration-300 group-hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <!-- Fallback Text if Logo fails to load -->
                         <span class="text-2xl sm:text-3xl font-bold hidden border-b-2 border-white text-white pb-1 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">たかねこPodcast を聴く ↗</span>
                     </div>
@@ -230,8 +230,8 @@
             
             <div class="mb-10">
                 <p class="text-lg leading-relaxed mb-6">技術部では、たかねこちゃんねるのお手伝いをしています。</p>
-                <a href="#" class="inline-block px-6 py-3 border-2 border-theme font-bold hover-theme-invert transition-colors shadow-brutalist-sm">
-                    技術部 公式X (Twitter) ↗
+                <a href="https://x.com/takaneko_gijutu?s=11" target="_blank" rel="noopener noreferrer" class="inline-block px-6 py-3 border-2 border-theme font-bold hover-theme-invert transition-colors shadow-brutalist-sm">
+                    技術部 公式X ↗
                 </a>
             </div>
 
@@ -476,7 +476,7 @@
                 let snsHTML = '';
                 for (const [platform, link] of Object.entries(member.sns)) {
                     snsHTML += `
-                        <a href="${link}" class="text-sm border-2 border-theme px-3 py-1 font-bold hover-theme-invert transition-colors" target="_blank" rel="noopener noreferrer">
+                        <a href="${link}" class="text-sm border-2 border-theme px-3 py-1 font-bold hover-theme-invert transition-colors inline-block" target="_blank" rel="noopener noreferrer">
                             ${platform}
                         </a>
                     `;
