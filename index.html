@@ -207,7 +207,7 @@
 
                     <!-- Overlay for text/logo -->
                     <div class="absolute inset-0 z-10 flex items-center justify-center p-2 sm:p-4 pointer-events-none">
-                        <!-- Logo with Glow - Updated to Intermediate Size -->
+                        <!-- Logo with Glow -->
                         <img src="takanekopodcastlogo.png" alt="たかねこPodcast" class="w-auto max-h-48 sm:max-h-60 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.9)] sm:drop-shadow-[0_0_25px_rgba(255,255,255,1)] transition-transform duration-300 group-hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <!-- Fallback Text if Logo fails to load -->
                         <span class="text-2xl sm:text-3xl font-bold hidden border-b-2 border-white text-white pb-1 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">たかねこPodcast を聴く ↗</span>
@@ -259,17 +259,43 @@
 
     <footer class="border-t-2 border-theme bg-theme py-6 mt-auto">
         <div class="max-w-5xl mx-auto text-center font-bold px-4">
-            &copy; <span id="current-year"></span> たかねこちゃんねる技術部. All rights reserved.
+            &copy; <span id="current-year"></span> たかねこちゃんねる技術部. All rights reserved.<br>
+            <!-- 管理画面を開くための隠しリンク -->
+            <span onclick="openAdmin()" class="opacity-10 hover:opacity-100 cursor-pointer transition-opacity text-xs font-normal inline-block mt-2">管理画面</span>
         </div>
     </footer>
+
+    <!-- ================= ADMIN MODAL ================= -->
+    <div id="admin-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-[rgba(0,0,0,0.8)] backdrop-blur-sm p-4">
+        <div class="bg-theme border-2 border-theme shadow-brutalist p-6 w-full max-w-md relative text-[var(--text-color)]">
+            <button onclick="closeAdmin()" class="absolute top-3 right-4 text-3xl font-bold hover:opacity-50">&times;</button>
+            <h2 class="text-2xl font-bold mb-4 border-b-2 border-theme pb-2">ニュース投稿（管理画面）</h2>
+            <form id="admin-form" onsubmit="submitNews(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-1">日付</label>
+                    <input type="text" id="admin-date" required class="w-full border-2 border-theme bg-theme text-[var(--text-color)] p-2 focus:outline-none focus:ring-2 focus:ring-[var(--text-color)]" placeholder="2026.09.24">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">タイトル</label>
+                    <input type="text" id="admin-title" required class="w-full border-2 border-theme bg-theme text-[var(--text-color)] p-2 focus:outline-none focus:ring-2 focus:ring-[var(--text-color)]" placeholder="新しいニュース">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">内容</label>
+                    <textarea id="admin-content" required rows="4" class="w-full border-2 border-theme bg-theme text-[var(--text-color)] p-2 focus:outline-none focus:ring-2 focus:ring-[var(--text-color)]" placeholder="ニュースの詳細をここに書きます..."></textarea>
+                </div>
+                <button type="submit" id="admin-submit" class="w-full py-3 border-2 border-theme font-bold hover-theme-invert transition-colors mt-4 shadow-brutalist-sm">投稿する</button>
+            </form>
+            <p class="text-xs opacity-70 mt-4">※Firebaseの設定が完了すると、実際にデータが保存されサイトに反映されます。</p>
+        </div>
+    </div>
 
     <script>
         // ==========================================
         // DATA CONFIGURATION
         // ==========================================
         
-        // 1. News Data
-        const newsData = [
+        // デフォルトのニュースデータ（Firebase未設定時やエラー時に表示されます）
+        window.defaultNewsData = [
             {
                 date: "2026.09.22",
                 title: "公式サイトを公開しました！",
@@ -370,7 +396,8 @@
             applyTheme();
             
             // Render Content
-            renderNews();
+            // ページ読み込み時はまずデフォルトのニュースを表示します（その後Firebaseから取得できたら上書きされます）
+            window.renderNews(window.defaultNewsData); 
             renderMembers('tech-members-container', techMembers);
             renderMembers('mc-members-container', mcMembers);
         }
@@ -386,11 +413,9 @@
             
             if (currentTheme === 'dark') {
                 html.classList.add('dark');
-                // Change to Sun Icon
                 iconSvg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`;
             } else {
                 html.classList.remove('dark');
-                // Change to Moon Icon
                 iconSvg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
             }
         }
@@ -403,14 +428,12 @@
 
             if (menuOpen) {
                 menu.classList.add('open');
-                // Animate hamburger to X
                 lines[0].style.transform = 'translateY(10px) rotate(45deg)';
                 lines[1].style.opacity = '0';
                 lines[2].style.transform = 'translateY(-10px) rotate(-45deg)';
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                document.body.style.overflow = 'hidden'; 
             } else {
                 menu.classList.remove('open');
-                // Reset hamburger
                 lines[0].style.transform = 'none';
                 lines[1].style.opacity = '1';
                 lines[2].style.transform = 'none';
@@ -419,21 +442,14 @@
         }
 
         function navigate(sectionId) {
-            // Hide all sections
             document.querySelectorAll('.content-section').forEach(sec => {
                 sec.classList.remove('active');
             });
-            
-            // Show Target
             const target = document.getElementById(sectionId);
             if(target) {
                 target.classList.add('active');
             }
-
-            // Close menu if open
             if (menuOpen) toggleMenu();
-            
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
@@ -441,38 +457,35 @@
         // RENDERING FUNCTIONS
         // ==========================================
 
-        function renderNews() {
+        // Firebaseまたはデフォルトデータを引数として受け取るように改修
+        window.renderNews = function(newsArray) {
             const homeContainer = document.getElementById('home-news-container');
             const newsContainer = document.getElementById('all-news-container');
             
             homeContainer.innerHTML = '';
             newsContainer.innerHTML = '';
 
-            newsData.forEach((item, index) => {
+            newsArray.forEach((item, index) => {
                 const article = `
                     <article class="border-2 border-theme p-5 shadow-brutalist-sm bg-theme hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-colors group cursor-pointer">
                         <div class="text-sm font-bold mb-2 tracking-widest border-b border-theme inline-block group-hover:border-[var(--bg-color)] transition-colors">${item.date}</div>
                         <h3 class="text-xl font-bold mb-3">${item.title}</h3>
-                        <p class="text-base opacity-90">${item.content}</p>
+                        <p class="text-base opacity-90 whitespace-pre-line">${item.content}</p>
                     </article>
                 `;
 
-                // Append to Full News page
                 newsContainer.insertAdjacentHTML('beforeend', article);
-
-                // Append only top 3 to Home page
                 if (index < 3) {
                     homeContainer.insertAdjacentHTML('beforeend', article);
                 }
             });
-        }
+        };
 
         function renderMembers(containerId, dataArray) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
             dataArray.forEach(member => {
-                // Generate SNS HTML
                 let snsHTML = '';
                 for (const [platform, link] of Object.entries(member.sns)) {
                     snsHTML += `
@@ -482,7 +495,6 @@
                     `;
                 }
 
-                // Generative SVG Placeholder (Icon) perfectly matching B&W theme (Placed Behind)
                 const svgIcon = `
                     <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full text-[var(--text-color)]" fill="currentColor">
                         <rect width="100" height="100" fill="transparent"/>
@@ -493,12 +505,10 @@
 
                 let innerIconHTML = svgIcon;
             
-                // Extract Twitter handle if X URL exists
                 if (member.sns && member.sns.X) {
                     const match = member.sns.X.match(/(?:x\.com|twitter\.com)\/([^/?]+)/);
                     if (match && match[1]) {
                         const username = match[1];
-                        // Layer image OVER the SVG, hide image if it fails to load
                         innerIconHTML += `<img src="https://unavatar.io/twitter/${username}" alt="${member.name}" class="relative z-10 w-full h-full object-contain bg-[var(--bg-color)]" onerror="this.style.display='none'">`;
                     }
                 }
@@ -513,7 +523,7 @@
                         <div class="flex-grow text-center sm:text-left">
                             <h3 class="text-2xl font-bold mb-1">${member.name}</h3>
                             <div class="text-sm font-bold tracking-wider mb-4 border-b-2 border-theme inline-block pb-1">${member.role}</div>
-                            <p class="text-base mb-6 leading-relaxed">${member.intro}</p>
+                            <p class="text-base mb-6 leading-relaxed whitespace-pre-line">${member.intro}</p>
                             <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
                                 ${snsHTML}
                             </div>
@@ -525,9 +535,137 @@
             });
         }
 
+        // ==========================================
+        // ADMIN UI LOGIC
+        // ==========================================
+        window.openAdmin = function() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            // 今日の日付を自動入力
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('admin-date').value = `${yyyy}.${mm}.${dd}`;
+        };
+
+        window.closeAdmin = function() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        };
+
         // Run Init on Load
         window.addEventListener('DOMContentLoaded', init);
+    </script>
 
+    <!-- ==========================================
+         FIREBASE INTEGRATION (ES Modules)
+    =========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+        // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+        // ⚙️ ここにFirebaseの設定情報を貼り付けてください
+        // (例: apiKey: "AIzaSy...", projectId: "takaneko-...")
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+        const firebaseConfig = {// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCkd-ripBHwCw1YxlZ5OfP4pEq-HOkAqnE",
+  authDomain: "takaneko-57ab9.firebaseapp.com",
+  projectId: "takaneko-57ab9",
+  storageBucket: "takaneko-57ab9.firebasestorage.app",
+  messagingSenderId: "708375400909",
+  appId: "1:708375400909:web:208016c74a48aa04b43484",
+  measurementId: "G-WD7YY6GCZH"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+            
+        };
+
+        let db = null;
+
+        // configが空でない場合のみ初期化を実行
+        if (Object.keys(firebaseConfig).length > 0) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+            } catch (e) {
+                console.warn("Firebaseの初期化エラー: 設定情報を確認してください。");
+            }
+        }
+
+        // データベースからニュースを取得して描画する関数
+        window.loadFirebaseNews = async function() {
+            if (!db) return; // DB未設定時は何もしない
+            
+            try {
+                // 作成日時(createdAt)の降順でニュースを取得
+                const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                const fbNews = [];
+                
+                querySnapshot.forEach((doc) => {
+                    fbNews.push(doc.data());
+                });
+                
+                // データが存在すれば画面を上書き更新
+                if (fbNews.length > 0) {
+                    window.renderNews(fbNews);
+                }
+            } catch (error) {
+                console.error("ニュースの読み込みに失敗しました:", error);
+            }
+        };
+
+        // フォームからニュースを送信する関数
+        window.submitNews = async function(event) {
+            event.preventDefault();
+            
+            if (!db) {
+                alert("【エラー】\nコード下部の「firebaseConfig」に設定情報が貼り付けられていないため、投稿できません！");
+                return;
+            }
+            
+            const submitBtn = document.getElementById('admin-submit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '送信中...';
+
+            try {
+                // コレクション "news" に新しいデータを追加
+                await addDoc(collection(db, "news"), {
+                    date: document.getElementById('admin-date').value,
+                    title: document.getElementById('admin-title').value,
+                    content: document.getElementById('admin-content').value,
+                    createdAt: serverTimestamp() // 並び替え用にサーバーの時間を保存
+                });
+                
+                alert("ニュースを投稿しました！");
+                document.getElementById('admin-form').reset();
+                window.closeAdmin();
+                
+                // 投稿完了後、自動でニュース一覧を再取得して表示を更新
+                window.loadFirebaseNews(); 
+                
+            } catch (error) {
+                console.error("投稿エラー: ", error);
+                alert("エラーが発生しました。コンソールを確認してください。");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '投稿する';
+            }
+        };
+
+        // ページとモジュールの読み込みが完了したら、Firestoreからのデータ取得を試みる
+        window.loadFirebaseNews();
     </script>
 </body>
 </html>
