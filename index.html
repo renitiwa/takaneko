@@ -119,12 +119,13 @@
             <div class="border-2 border-theme p-6 sm:p-8 mb-12 shadow-brutalist bg-theme flex flex-col md:flex-row gap-8 items-center md:items-start">
                 <div class="flex-grow w-full order-2 md:order-1 text-center md:text-left">
                     <h1 class="text-3xl sm:text-4xl font-bold mb-6 border-b-2 border-theme pb-4">自己紹介</h1>
-                    <p class="text-lg leading-relaxed whitespace-pre-line mb-8">こんにちは！「たかねこ」です。
+                    <!-- ここがFirebaseから自動更新されます -->
+                    <p id="site-intro-text" class="text-lg leading-relaxed whitespace-pre-line mb-8">こんにちは！「たかねこ」です。
 普段はゲーム配信をしています！ホラゲー嫌いです</p>
                     <h2 class="text-xl font-bold mb-4">公式SNS</h2>
                     <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                        <a href="https://x.com/takaneko_ch?s=11" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors inline-block">X</a>
-                        <a href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors inline-block">YouTube</a>
+                        <a id="site-sns-x" href="https://x.com/takaneko_ch?s=11" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors inline-block">X</a>
+                        <a id="site-sns-yt" href="https://youtube.com/@takaneko_ch?si=pz_11W1WFgb2OK6p" target="_blank" rel="noopener noreferrer" class="px-6 py-2 border-2 border-theme font-bold hover-theme-invert transition-colors inline-block">YouTube</a>
                     </div>
                 </div>
                 <div class="flex-shrink-0 order-1 md:order-2">
@@ -145,7 +146,7 @@
                 <button onclick="navigate('news')" class="text-sm border-2 border-theme px-4 py-1.5 font-bold hover-theme-invert transition-colors">全て見る</button>
             </div>
             <div id="home-news-container" class="space-y-4">
-                <!-- Injected via JS -->
+                <!-- ホームには最新3件だけが入ります -->
             </div>
 
             <!-- Podcast Banner -->
@@ -166,7 +167,7 @@
         <section id="news" class="content-section">
             <h1 class="text-3xl sm:text-4xl font-bold mb-8 border-b-2 border-theme pb-4">NEWS</h1>
             <div id="all-news-container" class="space-y-6">
-                <!-- Injected via JS -->
+                <!-- ここに過去のニュースがすべて入ります -->
             </div>
         </section>
 
@@ -203,7 +204,7 @@
     </footer>
 
     <script>
-        window.defaultNewsData = [{ date: "2026.09.22", title: "公式サイトを公開しました！", content: "たかねこちゃんねるの公式サイトを公開しました！たかねこちゃんねる技術部、マイクラ課の情報も更新していきます！" }];
+        window.defaultNewsData = [{ date: "2026.09.22", title: "公式サイトを公開しました！", content: "たかねこちゃんねるの公式サイトを公開しました！" }];
 
         const techMembers = [
             { name: "れーにち", role: "技術部長", intro: "たかねこちゃんねる技術部を設立。切り抜きやたかねこPodcastの制作、技術部やマイクラ課全体の管理を担当。", sns: { X: "https://x.com/renitimc?s=11" } },
@@ -281,14 +282,21 @@
             const newsContainer = document.getElementById('all-news-container');
             homeContainer.innerHTML = '';
             newsContainer.innerHTML = '';
+            
             newsArray.forEach((item, index) => {
-                const article = `<article class="border-2 border-theme p-5 shadow-brutalist-sm bg-theme hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-colors group cursor-pointer">
+                const article = `<article class="border-2 border-theme p-5 shadow-brutalist-sm bg-theme hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-colors group cursor-pointer overflow-hidden">
                         <div class="text-sm font-bold mb-2 tracking-widest border-b border-theme inline-block group-hover:border-[var(--bg-color)] transition-colors">${item.date}</div>
                         <h3 class="text-xl font-bold mb-3">${item.title}</h3>
                         <p class="text-base opacity-90 whitespace-pre-line">${item.content}</p>
                     </article>`;
+                
+                // すべてのニュースをNEWSタブに表示
                 newsContainer.insertAdjacentHTML('beforeend', article);
-                if (index < 3) homeContainer.insertAdjacentHTML('beforeend', article);
+                
+                // 最新の3件だけをHOMEタブに表示
+                if (index < 3) {
+                    homeContainer.insertAdjacentHTML('beforeend', article);
+                }
             });
         };
 
@@ -328,9 +336,9 @@
     <!-- FIREBASE (Read Only) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-        // ※ここにFirebaseの設定を貼り付けてください
+        // ▼▼▼ Firebaseの設定情報を貼り付けてください ▼▼▼
         const firebaseConfig = {
   apiKey: "AIzaSyCkd-ripBHwCw1YxlZ5OfP4pEq-HOkAqnE",
   authDomain: "takaneko-57ab9.firebaseapp.com",
@@ -338,7 +346,7 @@
   storageBucket: "takaneko-57ab9.firebasestorage.app",
   messagingSenderId: "708375400909",
   appId: "1:708375400909:web:208016c74a48aa04b43484",
-  measurementId: "G-WD7YY6GCZH"
+  measurementId: "G-WD7YY6GCZH"   
         };
 
         let db = null;
@@ -347,17 +355,31 @@
             catch (e) { console.warn("Firebase Init Error"); }
         }
 
-        window.loadFirebaseNews = async function() {
+        window.loadFirebaseData = async function() {
             if (!db) return;
+            
+            // 1. サイト設定（自己紹介、SNSリンク）の読み込み
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "general"));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if(data.intro) document.getElementById('site-intro-text').innerText = data.intro;
+                    if(data.xUrl) document.getElementById('site-sns-x').href = data.xUrl;
+                    if(data.ytUrl) document.getElementById('site-sns-yt').href = data.ytUrl;
+                }
+            } catch (error) { console.error("設定読み込みエラー:", error); }
+
+            // 2. ニュースの読み込み
             try {
                 const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 const fbNews = [];
                 querySnapshot.forEach((doc) => fbNews.push(doc.data()));
                 if (fbNews.length > 0) window.renderNews(fbNews);
-            } catch (error) { console.error("News Load Error:", error); }
+            } catch (error) { console.error("ニュース読み込みエラー:", error); }
         };
-        window.loadFirebaseNews();
+        
+        window.loadFirebaseData();
     </script>
 </body>
 </html>
