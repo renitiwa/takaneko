@@ -108,7 +108,6 @@
             <a href="https://takanekopodcast.vercel.app/#top" target="_blank" rel="noopener noreferrer" class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors block">たかねこPodcast ↗</a>
             <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('tech')">たかねこちゃんねる技術部</button>
             <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('mc')">マイクラ課</button>
-            <!-- ゲーム募集ボタン追加 -->
             <button class="text-xl font-bold border-2 border-theme py-3 hover-theme-invert transition-colors" onclick="navigate('gamereq')">ゲーム募集</button>
         </div>
     </nav>
@@ -251,10 +250,29 @@
             document.getElementById('current-year').textContent = new Date().getFullYear();
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { currentTheme = 'dark'; }
             applyTheme();
+            
             window.renderNews(window.defaultNewsData); 
             renderMembers('tech-members-container', techMembers);
             renderMembers('mc-members-container', mcMembers);
+
+            // ★ 初期読み込み時にURLのハッシュ(#)を確認してページを開く
+            const hash = window.location.hash.replace('#', '');
+            if (hash && document.getElementById(hash)) {
+                navigate(hash, false);
+            } else {
+                navigate('home', false);
+            }
         }
+
+        // ★ ブラウザの「戻る」「進む」ボタンが押された時の処理
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && document.getElementById(hash)) {
+                navigate(hash, false);
+            } else {
+                navigate('home', false);
+            }
+        });
 
         function toggleTheme() { currentTheme = currentTheme === 'light' ? 'dark' : 'light'; applyTheme(); }
 
@@ -290,12 +308,25 @@
             }
         }
 
-        function navigate(sectionId) {
+        // ★ navigate関数を更新（URLのハッシュも書き換えるように変更）
+        function navigate(sectionId, updateHash = true) {
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            
             const target = document.getElementById(sectionId);
-            if(target) target.classList.add('active');
+            if(target) {
+                target.classList.add('active');
+            } else {
+                document.getElementById('home').classList.add('active');
+                sectionId = 'home';
+            }
+            
             if (menuOpen) toggleMenu();
             window.scrollTo({ top: 0, behavior: 'instant' });
+
+            // URLの末尾に #news などを追加（画面がカクつかない方法）
+            if (updateHash) {
+                history.pushState(null, null, '#' + sectionId);
+            }
         }
 
         window.renderNews = function(newsArray) {
